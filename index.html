@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pomodoro Timer</title>
+<style>
+  body, html {
+    height: 100%;
+    margin: 0;
+    font-family: Arial, sans-serif;
+  }
+
+  .container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    text-align: center;
+  }
+
+  .timer {
+    background-color: red;
+    width: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+
+  .break {
+    background-color: green;
+    width: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+    display: none; /* Hide break initially */
+  }
+
+  .minute-text {
+    font-size: 5em;
+    color: white;
+    margin: 0;
+  }
+
+  .tomato-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 60px);
+    gap: 5px;
+    margin: 20px 0;
+  }
+
+  .tomato {
+    width: 60px;
+    height: 60px;
+    background-image: url('tomato.png'); /* Replace with your image path */
+    background-size: cover;
+    opacity: 0.3;
+  }
+
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <div id="timer" class="timer">
+    <div class="tomato-grid"></div>
+    <div class="minute-text">25:00</div>
+  </div>
+
+  <div id="break" class="break">
+    <div class="tomato-grid"></div>
+    <div class="minute-text">5:00</div>
+  </div>
+
+</div>
+
+<script>
+  const timerElement = document.getElementById('timer');
+  const breakElement = document.getElementById('break');
+  const timerText = timerElement.querySelector('.minute-text');
+  const breakText = breakElement.querySelector('.minute-text');
+  let onBreak = false;
+  let intervalId;
+
+  function setupTomatoes(count, container) {
+    for (let i = 0; i < count; i++) {
+      const tomato = document.createElement('div');
+      tomato.classList.add('tomato');
+      container.appendChild(tomato);
+    }
+  }
+
+  function startTimer(duration, display, container) {
+    let timer = duration, minutes, seconds;
+    display.textContent = formatTime(duration);
+
+    intervalId = setInterval(function () {
+      minutes = parseInt(timer / 60, 10);
+      seconds = parseInt(timer % 60, 10);
+      display.textContent = formatTime(timer);
+
+      let passedMinutes = (duration - timer) / 60;
+      [...container.children].forEach((tomato, index) => {
+        if (index < passedMinutes) {
+          tomato.style.opacity = 1;
+        }
+      });
+
+      if (--timer < 0) {
+        clearInterval(intervalId);
+        switchModes();
+      }
+    }, 1000);
+  }
+
+  function switchModes() {
+    timerElement.style.display = onBreak ? 'flex' : 'none';
+    breakElement.style.display = onBreak ? 'none' : 'flex';
+    const newDuration = onBreak ? 25 * 60 : 5 * 60;
+    const newTextElement = onBreak ? timerText : breakText;
+    const newContainer = onBreak ? timerElement.querySelector('.tomato-grid') : breakElement.querySelector('.tomato-grid');
+    setupTomatoes(onBreak ? 25 : 5, newContainer);
+    startTimer(newDuration, newTextElement, newContainer);
+    onBreak = !onBreak;
+  }
+
+  function formatTime(time) {
+    let minutes = parseInt(time / 60, 10);
+    let seconds = parseInt(time % 60, 10);
+    seconds = seconds < 10 ? "0" + seconds : seconds;
+    return minutes + ":" + seconds;
+  }
+
+  // Initialize the timer and tomatoes
+  setupTomatoes(25, timerElement.querySelector('.tomato-grid'));
+  startTimer(25 * 60, timerText, timerElement.querySelector('.tomato-grid'));
+
+</script>
+
+</body>
+</html>

@@ -35,7 +35,8 @@
 
   .break {
     background-color: green;
-    width: 100%;
+    width: 100dvw;
+    height: 100dvh;
     padding: 20px;
     box-sizing: border-box;
     display: none; /* Hide break initially */
@@ -49,14 +50,14 @@
 
   .tomato-grid {
     display: grid;
-    grid-template-columns: repeat(5, 10dvw);
+    grid-template-columns: repeat(5, 10dvh);
     gap: 5px;
     margin: 20px 0;
   }
 
   .tomato {
-    width: 10dvw;
-    height: 10dvw;
+    width: 10dvh;
+    height: 10dvh;
     background-image: url('tomato.png'); /* Replace with your image path */
     background-size: cover;
     opacity: 0.1;
